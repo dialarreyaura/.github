@@ -1,1 +1,35 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - branch1  # Nombre de tu primera rama
+      - branch2  # Nombre de tu segunda rama
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the branch
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Setup Pages
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            target_branch="gh-pages";
+          elif [[ "${{ github.ref }}" == "refs/heads/branch1" ]]; then
+            target_branch="branch1-pages";
+          elif [[ "${{ github.ref }}" == "refs/heads/branch2" ]]; then
+            target_branch="branch2-pages";
+          fi
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./  # Carpeta de tu sitio web exportado
+          publish_branch: ${{ steps.setup_pages.outputs.target_branch }}
 
